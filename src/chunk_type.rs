@@ -42,7 +42,7 @@ impl fmt::Display for ChunkTypeError {
 /// and 97-122 decimal)
 ///
 /// ['PNG Structure'](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html)
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ChunkType {
     /// Ancillary bit: bit 5 of first byte
     /// 0 (uppercase) = critical, 1 (lowercase) = ancillary.
@@ -201,7 +201,7 @@ impl FromStr for ChunkType {
         let b: [u8; 4] = s
             .as_bytes()
             .try_into()
-            .map_err(|e| ChunkTypeError::InvalidLength(e))?;
+            .map_err(ChunkTypeError::InvalidLength)?;
         ChunkType::try_from(b)
     }
 }
