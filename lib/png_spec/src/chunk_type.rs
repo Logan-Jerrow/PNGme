@@ -3,6 +3,7 @@ pub use error::ChunkTypeError;
 mod error;
 mod trait_impls;
 
+#[cfg(test)]
 mod tests;
 
 /// 4-byte chunk type code. For convenience in description and in

@@ -1,0 +1,15 @@
+[package]
+name = "message"
+version = "0.1.0"
+edition = "2021"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.63"
+clap = { version = "3.2.19", features = ["derive"] }
+clap-verbosity-flag = "1.0.1"
+log = "0.4.17"
+
+png_spec = { path = "../../lib/png_spec" }

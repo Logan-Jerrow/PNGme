@@ -10,13 +10,15 @@ impl TryFrom<&[u8]> for Chunk {
 
         let mut length: [u8; 4] = Default::default();
         reader.read_exact(&mut length)?;
-        let length = u32::from_be_bytes(length);
+        let length: usize = u32::from_be_bytes(length)
+            .try_into()
+            .expect("invalid length");
 
         let mut chunk_type: [u8; 4] = Default::default();
         reader.read_exact(&mut chunk_type)?;
         let chunk_type = ChunkType::try_from(chunk_type)?;
 
-        let mut data: Vec<u8> = vec![0; length as usize];
+        let mut data: Vec<u8> = vec![0; length];
         reader.read_exact(&mut data)?;
         let data = data;
 
@@ -25,11 +27,11 @@ impl TryFrom<&[u8]> for Chunk {
         let crc = u32::from_be_bytes(crc);
 
         // TODO: length must not exceed 2^31 bytes
-        let data_len = data.len() as u32;
+        let data_len = data.len();
         if data_len != length {
             return Err(ChunkError::Length {
-                expected: length,
-                actual: data_len,
+                expected: length as u32,
+                actual: data_len as u32,
             });
         }
 

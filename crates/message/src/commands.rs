@@ -1,7 +1,7 @@
 use crate::args::*;
 use anyhow::{bail, Context};
-use pngme::chunk::Chunk;
-use pngme::png::Png;
+use png_spec::chunk::Chunk;
+use png_spec::png::Png;
 use std::io::{stdout, BufWriter, Read, Write};
 use std::path::Path;
 use std::{fs::File, io::BufReader};

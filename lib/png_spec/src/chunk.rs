@@ -6,6 +6,7 @@ mod display;
 pub mod error;
 mod try_from;
 
+#[cfg(test)]
 mod tests;
 
 #[derive(Debug)]
@@ -26,11 +27,11 @@ impl Chunk {
     /// counts **only the data field**, not itself, the chunk type code, or the CRC. Zero is a valid
     /// length. Although encoders and decoders should treat the length as unsigned, its value must
     /// not exceed 2^31 bytes.
-    pub fn data_length(&self) -> u32 {
-        self.data.len() as u32
+    pub fn data_length(&self) -> usize {
+        self.data.len()
     }
 
-    pub fn size(&self) -> u32 {
+    pub fn size(&self) -> usize {
         4 // data length
         + 4 // chunk type
         + self.data_length()
@@ -49,16 +50,13 @@ impl Chunk {
     /// including the chunk type code and chunk data fields, but **not** including the length
     /// field. The CRC is always present, even for chunks containing no data.
     pub fn crc(&self) -> u32 {
-        let chunk: Vec<u8> = self
-            .chunk_type
-            .bytes()
-            .iter()
-            .chain(self.data.iter())
-            .copied()
-            .collect();
+        let length = 4 + self.data_length(); // 4 byte chunk type + data length
+        let mut bytes: Vec<u8> = Vec::with_capacity(length);
+        bytes.extend(self.chunk_type.bytes());
+        bytes.extend(self.data.iter());
 
         let crc = Crc::<u32>::new(&crc::CRC_32_ISO_HDLC);
-        crc.checksum(&chunk)
+        crc.checksum(&bytes)
     }
 
     pub fn data_as_string(&self) -> Result<String, Utf8Error> {
@@ -71,7 +69,12 @@ impl Chunk {
 
     pub fn as_bytes(&self) -> Vec<u8> {
         [
-            self.data_length().to_be_bytes().as_slice(),
+            u32::to_be_bytes(
+                self.data_length()
+                    .try_into()
+                    .expect("Length invalid: should be 4-byte unsigned integer."),
+            )
+            .as_slice(),
             self.chunk_type.bytes().as_slice(),
             self.data.as_slice(),
             self.crc().to_be_bytes().as_slice(),

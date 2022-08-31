@@ -1,5 +1,3 @@
-#![cfg(test)]
-
 use super::*;
 use std::convert::TryFrom;
 use std::str::FromStr;

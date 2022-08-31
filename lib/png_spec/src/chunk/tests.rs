@@ -1,5 +1,3 @@
-#![cfg(test)]
-
 use super::*;
 use crate::chunk_type::ChunkType;
 use std::str::FromStr;

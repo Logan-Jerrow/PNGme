@@ -45,7 +45,7 @@ impl TryFrom<&[u8]> for Png {
                 break;
             }
             let c = Chunk::try_from(v)?;
-            let size = c.size() as usize;
+            let size = c.size();
             chunks.push(c);
             v = &v[size..];
         }

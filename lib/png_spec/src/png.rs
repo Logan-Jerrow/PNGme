@@ -6,6 +6,7 @@ pub use self::error::PngError;
 mod error;
 mod trait_impls;
 
+#[cfg(test)]
 mod tests;
 
 pub struct Png {

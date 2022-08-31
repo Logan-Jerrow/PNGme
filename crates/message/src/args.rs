@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use pngme::chunk_type::ChunkType;
+use png_spec::chunk_type::ChunkType;
 use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
