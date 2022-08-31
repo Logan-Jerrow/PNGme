@@ -3,23 +3,39 @@ use std::{
     str::FromStr,
 };
 
-use super::{error::ChunkTypeError, ChunkType};
+use super::{
+    error::{Byte, ChunkTypeError},
+    ChunkType,
+};
 
 impl TryFrom<[u8; 4]> for ChunkType {
     type Error = ChunkTypeError;
 
     fn try_from(value: [u8; 4]) -> Result<Self, Self::Error> {
-        if value.into_iter().all(Self::is_valid_byte) {
-            Ok(ChunkType {
-                ancillary: value[0],
-                private: value[1],
-                reserved: value[2],
-                safe_to_copy: value[3],
-            })
-        } else {
-            // TODO: give precice bit(s) that are invalid
-            Err(ChunkTypeError::InvalidByte)
+        let [ancillary, private, reserved, safe_to_copy] = value;
+
+        if !Self::is_valid_byte(ancillary) {
+            return Err(ChunkTypeError::InvalidByte(Byte::Ancillary(ancillary)));
         }
+
+        if !Self::is_valid_byte(private) {
+            return Err(ChunkTypeError::InvalidByte(Byte::Private(private)));
+        }
+
+        if !Self::is_valid_byte(reserved) {
+            return Err(ChunkTypeError::InvalidByte(Byte::Reserved(reserved)));
+        }
+
+        if !Self::is_valid_byte(safe_to_copy) {
+            return Err(ChunkTypeError::InvalidByte(Byte::SafeToCopy(safe_to_copy)));
+        }
+
+        Ok(ChunkType {
+            ancillary,
+            private,
+            reserved,
+            safe_to_copy,
+        })
     }
 }
 
