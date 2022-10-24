@@ -5,6 +5,7 @@ use std::{error, fmt, io};
 pub enum ChunkError {
     IoError(std::io::Error),
     ChuckType(ChunkTypeError),
+    InvalidLength(u32),
     Length { expected: u32, actual: u32 },
     Crc { expected: u32, actual: u32 },
 }
@@ -28,6 +29,11 @@ impl fmt::Display for ChunkError {
                 write!(f, "encountered an io error while reading bytes: {e}")
             }
             ChunkError::ChuckType(e) => e.fmt(f),
+            ChunkError::InvalidLength(e) => write!(
+                f,
+                "invalid chunk data length '{e}': length must not \
+                exceed 2^32 bytes."
+            ),
             ChunkError::Length { expected, actual } => write!(
                 f,
                 "length mismatch: given '{expected}' != '{actual}' actual"

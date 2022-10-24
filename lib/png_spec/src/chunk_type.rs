@@ -1,5 +1,7 @@
 pub use error::ChunkTypeError;
 
+use crate::util;
+
 mod error;
 mod trait_impls;
 
@@ -84,12 +86,7 @@ pub struct ChunkType {
 
 impl ChunkType {
     /// Property bits position
-    const POSITION: u8 = 5;
-
-    /// Checks if the 5th bit of a property bit is one.
-    fn is_property_bit_set(byte: u8) -> bool {
-        ((byte >> Self::POSITION) & 1) != 0
-    }
+    const POSITION: util::Bit = util::Bit::Five;
 
     /// Valid bytes are represented by the characters A-Z or a-z
     pub fn is_valid_byte(byte: u8) -> bool {
@@ -121,27 +118,27 @@ impl ChunkType {
     /// 0 (uppercase) = critical, 1 (lowercase) = ancillary
     pub fn is_critical(&self) -> bool {
         // self.0[0].is_ascii_uppercase()
-        !Self::is_property_bit_set(self.ancillary)
+        !util::get_bit(self.ancillary, Self::POSITION)
     }
 
     /// Private bit: bit 5 of second byte
     /// 0 (uppercase) = public, 1 (lowercase) = private.
     pub fn is_public(&self) -> bool {
         // self.0[1].is_ascii_uppercase()
-        !Self::is_property_bit_set(self.private)
+        !util::get_bit(self.private, Self::POSITION)
     }
 
     /// Reserved bit: bit 5 of third byte
     /// Must be 0 (uppercase) in files conforming to this version of PNG.
     pub fn is_reserved_bit_valid(&self) -> bool {
         // self.reserved.is_ascii_uppercase()
-        !Self::is_property_bit_set(self.reserved)
+        !util::get_bit(self.reserved, Self::POSITION)
     }
 
     /// Safe-to-copy bit: bit 5 of fourth byte
     /// 0 (uppercase) = unsafe to copy, 1 (lowercase) = safe to copy.
     pub fn is_safe_to_copy(&self) -> bool {
         // !self.safe_to_copy.is_ascii_uppercase()
-        Self::is_property_bit_set(self.safe_to_copy)
+        util::get_bit(self.safe_to_copy, Self::POSITION)
     }
 }

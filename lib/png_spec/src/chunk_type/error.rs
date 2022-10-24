@@ -1,31 +1,31 @@
 use std::{error, fmt};
 
 #[derive(Debug)]
-pub enum Byte {
+pub enum PropertyByte {
     Ancillary(u8),
     Private(u8),
     Reserved(u8),
     SafeToCopy(u8),
 }
 
-impl Byte {
+impl PropertyByte {
     fn value(&self) -> u8 {
         match *self {
-            Byte::Ancillary(b) => b,
-            Byte::Private(b) => b,
-            Byte::Reserved(b) => b,
-            Byte::SafeToCopy(b) => b,
+            PropertyByte::Ancillary(b) => b,
+            PropertyByte::Private(b) => b,
+            PropertyByte::Reserved(b) => b,
+            PropertyByte::SafeToCopy(b) => b,
         }
     }
 }
 
-impl fmt::Display for Byte {
+impl fmt::Display for PropertyByte {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Byte::Ancillary(_) => write!(f, "ancillary"),
-            Byte::Private(_) => write!(f, "private"),
-            Byte::Reserved(_) => write!(f, "reserved"),
-            Byte::SafeToCopy(_) => write!(f, "safe to copy"),
+            PropertyByte::Ancillary(_) => write!(f, "ancillary"),
+            PropertyByte::Private(_) => write!(f, "private"),
+            PropertyByte::Reserved(_) => write!(f, "reserved"),
+            PropertyByte::SafeToCopy(_) => write!(f, "safe to copy"),
         }
     }
 }
@@ -33,7 +33,7 @@ impl fmt::Display for Byte {
 #[derive(Debug)]
 pub enum ChunkTypeError {
     /// chunk types are resricted to A-Z and a-z
-    InvalidByte(Byte),
+    InvalidByte(PropertyByte),
     /// chunk types are 4 bytes
     InvalidLength(std::array::TryFromSliceError),
 }

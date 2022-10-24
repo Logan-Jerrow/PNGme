@@ -23,6 +23,8 @@ impl Chunk {
         Chunk { chunk_type, data }
     }
 
+    // const MAX_DATA_LENGTH: usize = 2_usize.pow(31);
+
     /// A 4-byte unsigned integer giving the number of bytes in the chunk's data field. The length
     /// counts **only the data field**, not itself, the chunk type code, or the CRC. Zero is a valid
     /// length. Although encoders and decoders should treat the length as unsigned, its value must

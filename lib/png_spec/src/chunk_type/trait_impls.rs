@@ -4,7 +4,7 @@ use std::{
 };
 
 use super::{
-    error::{Byte, ChunkTypeError},
+    error::{ChunkTypeError, PropertyByte},
     ChunkType,
 };
 
@@ -15,19 +15,25 @@ impl TryFrom<[u8; 4]> for ChunkType {
         let [ancillary, private, reserved, safe_to_copy] = value;
 
         if !Self::is_valid_byte(ancillary) {
-            return Err(ChunkTypeError::InvalidByte(Byte::Ancillary(ancillary)));
+            return Err(ChunkTypeError::InvalidByte(PropertyByte::Ancillary(
+                ancillary,
+            )));
         }
 
         if !Self::is_valid_byte(private) {
-            return Err(ChunkTypeError::InvalidByte(Byte::Private(private)));
+            return Err(ChunkTypeError::InvalidByte(PropertyByte::Private(private)));
         }
 
         if !Self::is_valid_byte(reserved) {
-            return Err(ChunkTypeError::InvalidByte(Byte::Reserved(reserved)));
+            return Err(ChunkTypeError::InvalidByte(PropertyByte::Reserved(
+                reserved,
+            )));
         }
 
         if !Self::is_valid_byte(safe_to_copy) {
-            return Err(ChunkTypeError::InvalidByte(Byte::SafeToCopy(safe_to_copy)));
+            return Err(ChunkTypeError::InvalidByte(PropertyByte::SafeToCopy(
+                safe_to_copy,
+            )));
         }
 
         Ok(ChunkType {
